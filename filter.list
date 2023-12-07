@@ -21,3 +21,5 @@
 ||(^|\\.)ads\\.roku\\.com^
 ||r[0-9]*---sn-.*-.*.googlevideo.com^
 ||(\\.|^)log*\\.hicloud\\.com^
+||cdn.wordscapes.peoplefun.com^$important
+||dms1.amcrestview.com^$important
