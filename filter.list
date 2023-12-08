@@ -1,3 +1,9 @@
+! AdGuardHome filter
+!
+!  used to block access from IOT devices on my local networks
+!
+!
+
 ||metrics.plex.tv^
 ||info.plex.tv^
 ||dash-button-na-aws-opf.amazon.com^
