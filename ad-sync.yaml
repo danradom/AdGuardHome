@@ -1,0 +1,56 @@
+#!/usr/bin/env ansible-playbook
+#
+
+- hosts: dns
+  become: yes
+  become_user: root
+
+
+  tasks:
+
+
+   - name: set pwd var
+     local_action: command pwd
+     register: pwd
+
+
+   - name: copy AdGuardHome.yaml
+     fetch:
+       src: /opt/AdGuardHome/AdGuardHome.yaml
+       dest: "{{ pwd.stdout }}/AdGuardHome.yaml"
+       flat: yes
+     delegate_to: dns1
+
+
+   - name: stop AdGuardHome.service
+     systemd:
+       name: AdGuardHome.service
+       state: stopped
+
+   - name: sync AdGuardHome.yaml
+     copy:
+       src: "{{ pwd.stdout }}/AdGuardHome.yaml"
+       dest: /opt/AdGuardHome/AdGuardHome.yaml
+       owner: root
+       group: root
+       mode: '0644'
+       backup: yes
+
+
+   - name: start AdGuardHome.service
+     systemd:
+       name: AdGuardHome.service
+       state: started
+
+   - name: backup AdGuardHome.yaml file
+     copy:
+       src: "{{ pwd.stdout }}/AdGuardHome.yaml"
+       dest: "{{ pwd.stdout }}/backup/AdGuardHome.yaml-{{ lookup('pipe', 'date +%Y%m%d-%H%M') }}"
+     delegate_to: 127.0.0.1
+
+
+   - name: cleanup AdGuardHome.yaml file
+     file:
+       state: absent
+       name: "{{ pwd.stdout }}/AdGuardHome.yaml"
+     delegate_to: 127.0.0.1
