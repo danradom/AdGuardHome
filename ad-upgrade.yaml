@@ -1,0 +1,71 @@
+#!/usr/bin/env ansible-playbook
+#
+
+- hosts: dns
+  become: yes
+  become_user: root
+
+
+  tasks:
+
+
+   - name: set pwd var
+     local_action: command pwd
+     register: pwd
+
+
+   - name: remove existing downloads
+     file:
+       path: /home/dr/incoming/AdGuardHome/
+       state: absent
+     ignore_errors: true
+
+
+   - name: extract AdGuard update
+     unarchive:
+       src: https://static.adguard.com/adguardhome/release/AdGuardHome_linux_amd64.tar.gz
+       dest: /home/dr/incoming/
+       remote_src: true
+
+
+   - name: backup /opt/AdGuardHome/AdGuardHome.yaml
+     copy:
+       src: /opt/AdGuardHome/AdGuardHome.yaml
+       dest: /home/dr/incoming/AdGuardHome/AdGuardHome.yaml
+       remote_src: true
+
+
+   - name: stop AdGuardHome
+     shell:
+       cmd: /opt/AdGuardHome/AdGuardHome -s stop
+
+
+   - name: backup AdGuardHome installation before upgrade
+     copy:
+       src: /opt/AdGuardHome
+       dest: "/opt/AdGuardHome-backup-{{ lookup('pipe', 'date +%Y%m%d-%H%M') }}"
+       remote_src: true
+
+
+   - name: remove old install files
+     file:
+       path: /opt/AdGuardHome/
+       state: absent
+
+
+   - name: install update
+     copy:
+       src: /home/dr/incoming/AdGuardHome
+       dest: /opt/
+       remote_src: true
+
+
+   - name: start AdGuardHome
+     shell:
+       cmd: /opt/AdGuardHome/AdGuardHome -s start
+
+
+   - name: cleanup
+     file:
+       path: /home/dr/incoming/AdGuardHome/
+       state: absent
