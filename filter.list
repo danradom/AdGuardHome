@@ -29,3 +29,4 @@
 ||(\\.|^)log*\\.hicloud\\.com^
 ||cdn.wordscapes.peoplefun.com^$important
 ||dms1.amcrestview.com^$important
+||ws.api.campchef.app^
