@@ -38,3 +38,5 @@
 @@||audience.cnn.com^$important
 @@||media.cnn.com^$important
 @@||edition.cnn.com^$important
+@@||*.turner.com^$important
+@@||*.media.net^$important
